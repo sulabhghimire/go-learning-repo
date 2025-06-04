@@ -36,6 +36,8 @@ Structs are a powerful feature in Go, providing a clean way to model complex dat
 
   - One struct can be embedded inside another, promoting its fields and methods to the outer struct.
   - This promotes composition over inheritance and allows reuse of common fields or behaviors.
+  - The method of embedded structs also gets promoter to outer struct.
+  - We can override the method from embedded struct by redefining in outer struct.
 
 - **Anonymous Fields**:
 
