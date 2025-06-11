@@ -1,0 +1,5 @@
+INFO: 2025/06/10 14:15:35 main.go:40: Writing in the file logger.
+INFO: 2025/06/10 14:17:30 main.go:44: Writing in the file logger.
+WARN: 2025/06/10 14:17:30 main.go:45: Writing in the file logger.
+ERROR: 2025/06/10 14:17:30 main.go:46: Writing in the file logger.
+DEBUG: 2025/06/10 14:17:30 main.go:47: Writing in the file logger.
