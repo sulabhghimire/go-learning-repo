@@ -53,3 +53,17 @@ There are several popular algorithms for implementing rate limiting, each with i
 | **Fixed Window**           | Simple to implement, low memory usage.           | Allows for surges at the window boundaries.               | Basic rate limiting where perfect accuracy is not critical.                  |
 | **Sliding Window Log**     | Perfectly accurate, no boundary issues.          | High memory and computational cost.                       | Scenarios requiring absolute precision where the traffic volume is low.      |
 | **Sliding Window Counter** | Good balance of accuracy and performance.        | More complex than a fixed window.                         | High-performance, large-scale systems (e.g., major API providers).           |
+
+## 5. Practical Use Cases for Rate Limiting
+
+- API Rate Limiting
+- Traffic Shaping
+- Preventing Abuse
+- Load Management
+
+## 6. Best Practices
+
+- Choose the Right Algorithm
+- Handle Edge Cases
+- Monitor and Adjust
+- Graceful Handling of Rate Limits
