@@ -2,24 +2,22 @@ package main
 
 import (
 	"crypto/tls"
-	"crypto/x509"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"golang.org/x/net/http2"
 )
 
-func loadClientCAs() *x509.CertPool {
-	clientCAs := x509.NewCertPool()
-	caCert, err := os.ReadFile("cert.pem")
-	if err != nil {
-		log.Fatalln("Couldn't load client CA:", err)
-	}
-	clientCAs.AppendCertsFromPEM(caCert)
-	return clientCAs
-}
+// func loadClientCAs() *x509.CertPool {
+// 	clientCAs := x509.NewCertPool()
+// 	caCert, err := os.ReadFile("cert.pem")
+// 	if err != nil {
+// 		log.Fatalln("Couldn't load client CA:", err)
+// 	}
+// 	clientCAs.AppendCertsFromPEM(caCert)
+// 	return clientCAs
+// }
 
 func main() {
 
@@ -53,8 +51,8 @@ func main() {
 	// Configure TLS
 	tlsConfig := &tls.Config{
 		MinVersion: tls.VersionTLS12,
-		ClientAuth: tls.RequireAndVerifyClientCert, // going to enforce mTLS i.e mutual TLS
-		ClientCAs:  loadClientCAs(),                // loading client CA's -- pool of trusted CAs
+		// ClientAuth: tls.RequireAndVerifyClientCert, // going to enforce mTLS i.e mutual TLS
+		// ClientCAs:  loadClientCAs(),                // loading client CA's -- pool of trusted CAs
 	}
 
 	// Create a custom server
