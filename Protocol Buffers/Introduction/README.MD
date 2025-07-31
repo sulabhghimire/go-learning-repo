@@ -279,11 +279,11 @@ Fields are the fundamental building blocks of messages in protocol buffers. In p
 - Use Meaningful Names
 - Avoid Reserved Field Numbers
 
-## Fields Types and Data Types
+### Fields Types and Data Types
 
 Field type defined the type of data that a field can hold in protocol buffer. Each field in a message must have an specified type which dictates how data is serialized and deserialized. The basic field types supported in Protocol Buffers are:
 
-### Numeric Type
+#### Numeric Type
 
 - int32/64 : A 32/64-bit signed integer.
 - unit32/62 : A 32/64-bit unsigned integer.
@@ -291,17 +291,17 @@ Field type defined the type of data that a field can hold in protocol buffer. Ea
 - fixed32/64 : A 32/63-bit fixed-sized integer.
 - sfixed32/63 : A 32/64-bit signed fixed-sized integer.
 
-#### Demystifying Numeric Types in Protocol Buffers
+##### Demystifying Numeric Types in Protocol Buffers
 
 Protocol Buffers (Protobuf) offer a variety of numeric data types, each with specific characteristics that make them suitable for different kinds of data and use cases. Understanding the nuances of these types is crucial for optimizing data serialization for size and speed. Here's a detailed breakdown of the numeric types available in Protobuf, complete with examples and guidance on when to use each.
 
 The numeric types in Protocol Buffers can be broadly categorized into two main groups based on their encoding: variable-length integers (varints) and fixed-size integers.
 
-#### Variable-Length Integers (Varints)
+##### Variable-Length Integers (Varints)
 
 Varints are a method of serializing integers using one or more bytes. Smaller numbers take a smaller number of bytes, which makes them highly efficient for fields that often contain small values.
 
-##### `int32` and `int64`
+###### `int32` and `int64`
 
 - **Description**: These are signed integers. They use a variable-length encoding scheme. However, they are inefficient for encoding negative numbers. A negative `int32` or `int64` will always take 10 bytes when serialized, which is the maximum possible.
 - **When to use**: Use `int32` or `int64` when you expect the values to be positive and mostly small.
@@ -309,7 +309,7 @@ Varints are a method of serializing integers using one or more bytes. Smaller nu
   - `int32`: -2,147,483,648 to 2,147,483,647
   - `int64`: -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
 
-##### `uint32` and `uint64`
+###### `uint32` and `uint64`
 
 - **Description**: These are unsigned integers that also use variable-length encoding.
 - **When to use**: Use `uint32` or `uint64` when you know the values will always be non-negative.
@@ -317,27 +317,27 @@ Varints are a method of serializing integers using one or more bytes. Smaller nu
   - `uint32`: 0 to 4,294,967,295
   - `uint64`: 0 to 18,446,744,073,709,551,615
 
-##### `sint32` and `sint64`
+###### `sint32` and `sint64`
 
 - **Description**: These are signed integers that use Zig-zag encoding. Zig-zag encoding maps signed integers to unsigned integers in a way that numbers with a small absolute value (like -1) have a small varint encoded value. This makes them much more efficient for encoding negative numbers than `int32` and `int64`.
 - **When to use**: Use `sint32` or `sint64` when you expect to frequently have negative numbers.
 - **Value Range**: Same as `int32` and `int64` respectively.
 
-#### Fixed-Size Integers
+##### Fixed-Size Integers
 
 Fixed-size integers always use a fixed number of bytes, regardless of the value. `fixed32` and `sfixed32` always use 4 bytes, while `fixed64` and `sfixed64` always use 8 bytes.
 
-##### `fixed32` and `fixed64`
+###### `fixed32` and `fixed64`
 
 - **Description**: These are unsigned integers that always take 4 and 8 bytes respectively.
 - **When to use**: Use these types when the values are often large (greater than 2^28 for `fixed32` or 2^56 for `fixed64`), as they can be more efficient than `uint32` and `uint64` in these cases. A common use case for `fixed32` is storing values like a CRC32 hash.
 
-##### `sfixed32` and `sfixed64`
+###### `sfixed32` and `sfixed64`
 
 - **Description**: These are signed integers that always take 4 and 8 bytes respectively.
 - **When to use**: Similar to their unsigned counterparts, `sfixed32` and `sfixed64` are more efficient than `sint32` and `sint64` for large signed numbers.
 
-#### Example `.proto` file
+##### Example `.proto` file
 
 Here is an example of a `.proto` file that uses each of the numeric data types:
 
@@ -363,7 +363,7 @@ message NumericData {
 }
 ```
 
-#### Key Differences and When to Use Each Type
+##### Key Differences and When to Use Each Type
 
 | Type                       | Size               | Use Case                                                                               |
 | -------------------------- | ------------------ | -------------------------------------------------------------------------------------- |
@@ -375,24 +375,24 @@ message NumericData {
 
 **In summary**, choosing the right numeric type in Protocol Buffers is a matter of understanding your data. For most cases with signed integers, `sint32` or `sint64` are the most efficient choices. For non-negative numbers, `uint32` and `uint64` are ideal. The fixed-size types should be reserved for scenarios where you consistently deal with very large numbers.
 
-### Floating-Point Types
+#### Floating-Point Types
 
 - float: A single-precision(32-bit) floating-point number.
 - double: A double-precision(64-bit) floating-point number.
 
-### Boolean Type
+#### Boolean Type
 
 A Boolean value can be either `true` or `false`.
 
-### String Type
+#### String Type
 
 A sequence of UTF-8 characters, used for textual data.
 
-### Bytes Type
+#### Bytes Type
 
 A sequence of raw bytes, used for binary data.
 
-### Enumerations
+#### Enumerations
 
 We can use enumerations type to define a set of named constants.
 
@@ -404,7 +404,7 @@ enum Status {
 }
 ```
 
-### Message Types
+#### Message Types
 
 Fields can also be of another message type allowing complex data structures.
 
@@ -420,11 +420,11 @@ message Person{
 }
 ```
 
-### Repeated And Optional Fields
+#### Repeated And Optional Fields
 
 By using repeated fields we can define fields that can hold multiple values of the same type. This can be done using repeated keyword. This is used for carrying list of data.
 
-#### Example repeated field
+##### Example repeated field
 
 ```proto
 message Person{
@@ -434,7 +434,7 @@ message Person{
 
 We can use the `optional` keyword in `proto2`, but it's generally not required in `proto3`.
 
-### Best Practices for Field and Data Types
+#### Best Practices for Field and Data Types
 
 1. Choose the Right Type
    Choosing proper type helps to optimize the process of data serialization and deserialization performance.
@@ -443,3 +443,26 @@ We can use the `optional` keyword in `proto2`, but it's generally not required i
 3. Use Enumerations for Categorical Data
 4. Plan for Changes
    Design messages to accommodate future changes such as adding new fields or values to enumerations.
+
+## Field Numbers
+
+In protocol buffers each field within a message is assigned a field number which is a unique identifier that allows the protocol buffers library to differentiate between fields during serialization and deserialization. They are critical for maintaining the compatibility of our data structures over time.
+
+### Rules for Field Numbers
+
+- Use Positive Integers
+- Avoid Zero
+- Unique within a message
+
+### Best Practices for Field Numbers
+
+- Use small numbers for frequently used fields
+- Use larger numbers for less common fields
+- Reserve Numbers for Future Use
+
+### Changing Field Numbers
+
+- Decommission Fields
+  If we no longer need a field we can mark it as reserved without reusing its number. This way the field remains recognized in older serialized data without causing conflicts.
+- Add New Fields
+  Instead of changing existing field numbers add new fields with new field numbers.
