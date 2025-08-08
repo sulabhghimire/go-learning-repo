@@ -8,6 +8,7 @@ import (
 	pb "simplegPRCServer/proto/gen"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type server struct {
@@ -20,14 +21,22 @@ func (s *server) Add(ctx context.Context, req *pb.AddRequest) (*pb.AddResponse, 
 
 func main() {
 
-	serveAddress := "localhost:50001"
+	cert := "cert.pem"
+	key := "key.pem"
+
+	serveAddress := "127.0.0.1:50001"
 
 	list, err := net.Listen("tcp", serveAddress)
 	if err != nil {
 		log.Fatal("Failed to listen.", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	cred, err := credentials.NewServerTLSFromFile(cert, key)
+	if err != nil {
+		log.Fatal("Error loading credential.", err)
+	}
+
+	grpcServer := grpc.NewServer(grpc.Creds(cred))
 
 	pb.RegisterCalculateServer(grpcServer, &server{})
 
