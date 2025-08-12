@@ -1,2 +1,5 @@
 protoc --go_out=. --go-grpc_out=. proto/main.proto
+protoc -I=proto --go_out=. --go-grpc_out=. proto/main.proto proto/greeter.proto
+protoc -I=proto --go_out=. --go-grpc_out=. proto/main.proto proto/greeter.proto proto/farewell/farewell.proto
+
 go get google.golang.org/grpc

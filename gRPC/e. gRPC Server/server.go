@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 
 	pb "simplegPRCServer/proto/gen"
+	farewellpb "simplegPRCServer/proto/gen/farewell"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -13,10 +15,20 @@ import (
 
 type server struct {
 	pb.UnimplementedCalculateServer
+	pb.UnimplementedGreeterServer
+	farewellpb.UnimplementedAufWiedersehenServer
 }
 
 func (s *server) Add(ctx context.Context, req *pb.AddRequest) (*pb.AddResponse, error) {
 	return &pb.AddResponse{Sum: req.A + req.B}, nil
+}
+
+func (s *server) Greet(ctx context.Context, req *pb.HelloRequest) (*pb.HelloResponse, error) {
+	return &pb.HelloResponse{Message: fmt.Sprintf("Hello user %s.", req.Name)}, nil
+}
+
+func (s *server) BidGoodBye(ctx context.Context, req *farewellpb.GoodByeRequest) (*farewellpb.GoodByeResponse, error) {
+	return &farewellpb.GoodByeResponse{Message: fmt.Sprintf("Bye Bye %s.", req.Name)}, nil
 }
 
 func main() {
@@ -39,6 +51,8 @@ func main() {
 	grpcServer := grpc.NewServer(grpc.Creds(cred))
 
 	pb.RegisterCalculateServer(grpcServer, &server{})
+	pb.RegisterGreeterServer(grpcServer, &server{})
+	farewellpb.RegisterAufWiedersehenServer(grpcServer, &server{})
 
 	// skipping something
 

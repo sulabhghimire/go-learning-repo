@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	mainapipb "grpcClient/proto/gen"
+	farewellpb "grpcClient/proto/gen/farewell"
 	"log"
 	"time"
 
@@ -26,6 +27,8 @@ func main() {
 	defer conn.Close()
 
 	client := mainapipb.NewCalculateClient(conn)
+	client2 := mainapipb.NewGreeterClient(conn)
+	client3 := farewellpb.NewAufWiedersehenClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -36,6 +39,24 @@ func main() {
 	if err != nil {
 		log.Fatalln("Could not add", err)
 	}
-
 	log.Println("Sum : ", res.Sum)
+
+	req2 := &mainapipb.HelloRequest{
+		Name: "John",
+	}
+	res2, err := client2.Greet(ctx, req2)
+	if err != nil {
+		log.Fatalln("Could not greet", err)
+	}
+	log.Println("Greeting message : ", res2.Message)
+
+	req3 := &farewellpb.GoodByeRequest{
+		Name: "Sulabh",
+	}
+	res3, err := client3.BidGoodBye(ctx, req3)
+	if err != nil {
+		log.Fatalln("Could not bid goodbye", err)
+	}
+	log.Println("Goodbye message : ", res3.Message)
+
 }
