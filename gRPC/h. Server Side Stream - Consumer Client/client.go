@@ -4,6 +4,7 @@ import (
 	"context"
 	"io"
 	"log"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -21,6 +22,7 @@ func main() {
 
 	client := main_pb.NewCalculatorClient(conn)
 
+	// Server side streaming
 	ctx := context.Background()
 	req := &main_pb.FibonacciRequest{
 		Count: 10,
@@ -43,4 +45,23 @@ func main() {
 		log.Println(resp.GetNumber())
 	}
 
+	// Client side streaming
+	stream1, err := client.SendNumbers(ctx)
+	if err != nil {
+		log.Fatalln("Error creating stream:", err)
+	}
+
+	for num := range 9 {
+		err = stream1.Send(&main_pb.NumberRequest{Number: int32(num)})
+		if err != nil {
+			log.Fatalln("Error sending number to stream:", err)
+		}
+		time.Sleep(time.Second)
+	}
+
+	res, err := stream1.CloseAndRecv()
+	if err != nil {
+		log.Fatalln("Error receiving response:", err)
+	}
+	log.Println("Sum:", res.GetSum())
 }

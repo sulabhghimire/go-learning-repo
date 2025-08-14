@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	main_pb "grpcstreams/proto/gen"
+	"io"
 	"log"
 	"net"
 	"time"
@@ -31,6 +32,25 @@ func (s *server) GenerateFibonacci(req *main_pb.FibonacciRequest, stream main_pb
 		time.Sleep(time.Second) // Simulate processing time
 	}
 	return nil
+}
+
+func (s *server) SendNumbers(stream main_pb.Calculator_SendNumbersServer) error {
+
+	var sum int32
+
+	for {
+		req, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(&main_pb.NumberResponse{Sum: sum})
+		}
+		if err != nil {
+			log.Fatalln(err)
+			return err
+		}
+
+		log.Println(req.GetNumber())
+		sum += req.GetNumber()
+	}
 }
 
 func main() {
