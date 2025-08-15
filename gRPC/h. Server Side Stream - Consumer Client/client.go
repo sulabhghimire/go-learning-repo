@@ -64,4 +64,43 @@ func main() {
 		log.Fatalln("Error receiving response:", err)
 	}
 	log.Println("Sum:", res.GetSum())
+
+	// Bidirectional streaming
+	chatStream, err := client.Chat(ctx)
+	if err != nil {
+		log.Fatalln("Error creating chat stream:", err)
+	}
+
+	waitCh := make(chan struct{})
+
+	// Send messages in a separate goroutine
+	go func() {
+		messages := []string{"Hello", "How are you?", "Goodbye"}
+		for _, msg := range messages {
+			err := chatStream.Send(&main_pb.ChatMessage{Message: msg})
+			if err != nil {
+				log.Fatalln("Error sending message:", err)
+			}
+			time.Sleep(time.Second)
+		}
+		chatStream.CloseSend()
+	}()
+
+	// Get messages in a separate goroutine
+	go func() {
+		for {
+			res, err := chatStream.Recv()
+			if err == io.EOF {
+				log.Println("End of chat stream")
+				break
+			}
+			if err != nil {
+				log.Fatalln("Error receiving message:", err)
+			}
+			log.Println("Received message:", res.GetMessage())
+		}
+		close(waitCh)
+	}()
+
+	<-waitCh
 }
