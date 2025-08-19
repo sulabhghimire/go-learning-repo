@@ -9,6 +9,7 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/encoding/gzip"
 )
 
 func main() {
@@ -20,7 +21,7 @@ func main() {
 		log.Fatalln("Error loading TLS Certification:", err)
 	}
 
-	conn, err := grpc.NewClient("127.0.0.1:50001", grpc.WithTransportCredentials(creds))
+	conn, err := grpc.NewClient("127.0.0.1:50001", grpc.WithTransportCredentials(creds), grpc.WithDefaultCallOptions(grpc.UseCompressor(gzip.Name)))
 	if err != nil {
 		log.Fatalln("Did not connect:", err)
 	}
@@ -35,7 +36,7 @@ func main() {
 
 	req := &mainapipb.AddRequest{A: 10, B: 12}
 
-	res, err := client.Add(ctx, req)
+	res, err := client.Add(ctx, req, grpc.UseCompressor(gzip.Name))
 	if err != nil {
 		log.Fatalln("Could not add", err)
 	}

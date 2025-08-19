@@ -11,6 +11,8 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+
+	_ "google.golang.org/grpc/encoding/gzip" // compression in server
 )
 
 type server struct {
