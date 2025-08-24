@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/encoding/gzip"
+	"google.golang.org/grpc/metadata"
 )
 
 func main() {
@@ -34,13 +35,21 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
+	md := metadata.Pairs("authorization", "Bearer=somerandomstring", "test", "testing", "test2", "testing2")
+	ctx = metadata.NewOutgoingContext(ctx, md)
 	req := &mainapipb.AddRequest{A: 10, B: 12}
 
-	res, err := client.Add(ctx, req, grpc.UseCompressor(gzip.Name))
+	var responseHeader metadata.MD
+	var responseTrailer metadata.MD
+	res, err := client.Add(ctx, req, grpc.UseCompressor(gzip.Name), grpc.Header(&responseHeader), grpc.Trailer(&responseTrailer))
 	if err != nil {
 		log.Fatalln("Could not add", err)
 	}
 	log.Println("Sum : ", res.Sum)
+	log.Println("Response Header", responseHeader)
+	log.Println(responseHeader["test"])
+	log.Println("Response Trailer", responseTrailer)
+	log.Println(responseTrailer["test-trailer"])
 
 	req2 := &mainapipb.HelloRequest{
 		Name: "John",

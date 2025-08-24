@@ -11,6 +11,7 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/metadata"
 
 	_ "google.golang.org/grpc/encoding/gzip" // compression in server
 )
@@ -22,6 +23,30 @@ type server struct {
 }
 
 func (s *server) Add(ctx context.Context, req *pb.AddRequest) (*pb.AddResponse, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		log.Println("no metadata recieved.")
+	}
+	log.Println("Metadata: ", md)
+	val, ok := md["authorization"]
+	if !ok {
+		log.Println("No value with authorization key in metadata.")
+	} else {
+		log.Println(val)
+	}
+
+	// Set response headers
+	responseHeaders := metadata.Pairs("test", "test-value", "test2", "test-value2")
+	err := grpc.SendHeader(ctx, responseHeaders)
+	if err != nil {
+		return nil, err
+	}
+
+	trailer := metadata.Pairs("test-trailer", "test-trailer-value")
+	err = grpc.SetTrailer(ctx, trailer)
+	if err != nil {
+		return nil, err
+	}
 	return &pb.AddResponse{Sum: req.A + req.B}, nil
 }
 
