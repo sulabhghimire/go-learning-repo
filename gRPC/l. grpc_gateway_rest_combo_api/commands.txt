@@ -1,0 +1,21 @@
+protoc --go_out=. --go-grpc_out=. proto/main.proto
+protoc -I=proto --go_out=. --go-grpc_out=. proto/main.proto proto/greeter.proto
+protoc -I=proto --go_out=. --go-grpc_out=. proto/main.proto proto/greeter.proto proto/farewell/farewell.proto
+
+protoc -I=proto --go_out=. --go-grpc_out=. --validate_out=lang=go:. main.proto
+protoc -I=proto --go_out=. --go-grpc_out=. --grpc-gateway_out=. --validate_out=lang=go:. main.proto
+
+
+go get google.golang.org/grpc
+
+go install \
+    github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway \
+    github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-openapiv2 \
+
+Download from server
+
+
+go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
+
+curl -o annotations.proto https://raw.githubusercontent.com/googleapis/googleapis/master/google/api/annotations.proto
+curl -o http.proto https://raw.githubusercontent.com/googleapis/googleapis/master/google/api/http.proto
